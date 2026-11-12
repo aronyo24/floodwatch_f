@@ -9,8 +9,8 @@
  *    no CORS, and the staff session cookie just works.
  *  - NEXT_PUBLIC_API_BASE: the browser calls Django directly (needs CORS).
  *
- * With neither set, the Next server still proxies to Django at
- * http://127.0.0.1:8000. The bundled demo routes in src/app/api/ answer only
+ * With neither set, the Next server proxies to the live Heroku backend
+ * (lib/backend.ts). The bundled demo routes in src/app/api/ answer only
  * when FLOODWATCH_DEMO=true.
  */
 

@@ -6,7 +6,7 @@
  *  - Local (only with FLOODWATCH_DEMO=true): `public/data/dataset.json`, read once per process and
  *    memoised. It is a build artefact of `scripts/seed_data.py`, so it only
  *    changes when POST /api/update/ calls `invalidateDataset()`.
- *  - Django (default; FLOODWATCH_API_URL, else http://127.0.0.1:8000): the same `Dataset` shape is
+ *  - Django (default; FLOODWATCH_API_URL, else the Heroku backend): the same `Dataset` shape is
  *    assembled from the backend's public endpoints and cached for
  *    REMOTE_TTL_MS, so the server-rendered pages show exactly what the
  *    browser-side fetches show. Pages are then rendered per request instead
@@ -23,6 +23,8 @@ import path from "node:path";
 
 import { connection } from "next/server";
 
+import { backendUrl } from "./backend";
+
 import type {
   Alert,
   CycleDetail,
@@ -35,13 +37,10 @@ import type {
   Meta,
 } from "@/types/floodwatch";
 
-/** Django base URL for server-side reads, e.g. http://127.0.0.1:8000 */
-// The backend is the default. The bundled demo file is used only when
-// FLOODWATCH_DEMO=true, so a missing env file can never silently show demo data.
-const REMOTE =
-  process.env.FLOODWATCH_DEMO === "true"
-    ? ""
-    : (process.env.FLOODWATCH_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+/** Django base URL for server-side reads (see lib/backend.ts). The bundled demo
+ * file is used only when FLOODWATCH_DEMO=true, so a missing env file can never
+ * silently show demo data. */
+const REMOTE = backendUrl();
 const REMOTE_TTL_MS = 30_000;
 
 /** True when pages read from the Django backend instead of the local file. */

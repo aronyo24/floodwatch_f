@@ -1,18 +1,17 @@
 import type { NextConfig } from "next";
 
+import { backendUrl } from "./src/lib/backend";
+
 /**
  * FLOODWATCH_API_URL points the app at the Django backend. The Next server
  * then forwards /api/, /media/ (overlay PNGs) and /admin/ (+ its /static/) to
- * Django, ahead of the bundled demo route handlers. Django is the default
- * (http://127.0.0.1:8000); the bundled demo data is used only when
+ * Django, ahead of the bundled demo route handlers. With no env var the live
+ * Heroku backend is used (src/lib/backend.ts); the bundled demo data is used only when
  * FLOODWATCH_DEMO=true. The browser only ever
  * talks to this origin, so there is no CORS to configure and the staff session
  * cookie from /admin/ reaches POST /api/update/.
  */
-const demoMode = process.env.FLOODWATCH_DEMO === "true";
-const backend = demoMode
-  ? ""
-  : (process.env.FLOODWATCH_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+const backend = backendUrl();
 
 const nextConfig: NextConfig = {
   async rewrites() {
